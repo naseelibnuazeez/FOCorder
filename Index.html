@@ -1,43 +1,112 @@
-//test
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.2">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Order Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .chart-container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Purchase Orders Analysis Dashboard&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="styles.css" rel="stylesheet"&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="container"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="header"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h1&gt;Purchase Orders Analysis Dashboard&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="description"&gt;Interactive visualization of product orders and analytics&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="embedded-dashboard"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;script async src="//jsfiddle.net/naseelazeeniya/Lmgpt0q1/embed/result/"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="footer"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;© 2024 Dashboard Analytics. All rights reserved.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;Last updated: January 6, 2025&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+    <h1>Purchase Order Analysis</h1>
+    <section>
+        <h2>Grouped Items</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Group</th>
+                    <th>Item Code</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Total Cost (INR)</th>
+                </tr>
+            </thead>
+            <tbody id="itemTable">
+                <!-- Data will be populated dynamically -->
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Data Visualization</h2>
+        <div class="chart-container">
+            <canvas id="costChart"></canvas>
+        </div>
+    </section>
+
+    <script>
+        const items = [
+            { group: "Snacks", code: "68243", desc: "Tapioca Chips", qty: 285, cost: 15219.12 },
+            { group: "Snacks", code: "76855", desc: "Banana Chips", qty: 190, cost: 15845.95 },
+            { group: "Desserts", code: "789750", desc: "Rose Cookies", qty: 100, cost: 7500.04 },
+            { group: "Desserts", code: "71355", desc: "Coconut Halwa", qty: 180, cost: 39567.63 },
+            { group: "Spices", code: "443364", desc: "Coconut Chutney", qty: 100, cost: 12338.02 }
+        ];
+
+        // Populate Table
+        const tableBody = document.getElementById('itemTable');
+        items.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${item.group}</td>
+                             <td>${item.code}</td>
+                             <td>${item.desc}</td>
+                             <td>${item.qty}</td>
+                             <td>${item.cost.toFixed(2)}</td>`;
+            tableBody.appendChild(row);
+        });
+
+        // Graph Data
+        const groups = [...new Set(items.map(item => item.group))];
+        const groupCosts = groups.map(group => {
+            return items.filter(item => item.group === group)
+                        .reduce((sum, item) => sum + item.cost, 0);
+        });
+
+        // Render Chart
+        const ctx = document.getElementById('costChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: groups,
+                datasets: [{
+                    label: 'Total Cost (INR)',
+                    data: groupCosts,
+                    backgroundColor: ['#4CAF50', '#FFC107', '#2196F3', '#FF5722', '#9C27B0']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
+
