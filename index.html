@@ -1,111 +1,164 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchase Order Analysis</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .chart-container {
-            width: 80%;
-            margin: 0 auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-    </style>
+  <title>Purchase Order Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    main {
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .chart-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Purchase Order Analysis</h1>
-    <section>
-        <h2>Grouped Items</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Group</th>
-                    <th>Item Code</th>
-                    <th>Description</th>
-                    <th>Quantity</th>
-                    <th>Total Cost (INR)</th>
-                </tr>
-            </thead>
-            <tbody id="itemTable">
-                <!-- Data will be populated dynamically -->
-            </tbody>
-        </table>
-    </section>
+  <header>
+    <h1>Purchase Order Dashboard</h1>
+  </header>
+  <main>
+    <h2>Summary Table</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>PO Number</th>
+          <th>PO Date</th>
+          <th>Location</th>
+          <th>Items</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>MBIPO87960</td>
+          <td>Dec 30, 2024</td>
+          <td>Bangalore</td>
+          <td>Tapioca Chips, Kerala Banana Chips, Achappam, Jaggery Banana Chips, Ripe Banana Chips</td>
+          <td>95, 95, 100, 95, 95</td>
+        </tr>
+        <tr>
+          <td>MBIPO88964</td>
+          <td>Dec 31, 2024</td>
+          <td>Bangalore</td>
+          <td>Tender Coconut Halwa</td>
+          <td>120</td>
+        </tr>
+        <!-- Add more rows as needed -->
+      </tbody>
+    </table>
 
-    <section>
-        <h2>Data Visualization</h2>
-        <div class="chart-container">
-            <canvas id="costChart"></canvas>
-        </div>
-    </section>
+    <h2>Items Breakdown</h2>
+    <div class="chart-container">
+      <canvas id="itemsChart"></canvas>
+    </div>
 
-    <script>
-        const items = [
-            { group: "Snacks", code: "68243", desc: "Tapioca Chips", qty: 285, cost: 15219.12 },
-            { group: "Snacks", code: "76855", desc: "Banana Chips", qty: 190, cost: 15845.95 },
-            { group: "Desserts", code: "789750", desc: "Rose Cookies", qty: 100, cost: 7500.04 },
-            { group: "Desserts", code: "71355", desc: "Coconut Halwa", qty: 180, cost: 39567.63 },
-            { group: "Spices", code: "443364", desc: "Coconut Chutney", qty: 100, cost: 12338.02 }
-        ];
+    <h2>Orders by Location</h2>
+    <div class="chart-container">
+      <canvas id="locationChart"></canvas>
+    </div>
 
-        // Populate Table
-        const tableBody = document.getElementById('itemTable');
-        items.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${item.group}</td>
-                             <td>${item.code}</td>
-                             <td>${item.desc}</td>
-                             <td>${item.qty}</td>
-                             <td>${item.cost.toFixed(2)}</td>`;
-            tableBody.appendChild(row);
-        });
+    <h2>Purchase Order Details</h2>
+    <!-- Add individual PO details tables here -->
+    <h3>MBIPO87960</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Tapioca Chips</td>
+          <td>95</td>
+        </tr>
+        <tr>
+          <td>Kerala Banana Chips</td>
+          <td>95</td>
+        </tr>
+        <tr>
+          <td>Achappam</td>
+          <td>100</td>
+        </tr>
+        <tr>
+          <td>Jaggery Banana Chips</td>
+          <td>95</td>
+        </tr>
+        <tr>
+          <td>Ripe Banana Chips</td>
+          <td>95</td>
+        </tr>
+      </tbody>
+    </table>
 
-        // Graph Data
-        const groups = [...new Set(items.map(item => item.group))];
-        const groupCosts = groups.map(group => {
-            return items.filter(item => item.group === group)
-                        .reduce((sum, item) => sum + item.cost, 0);
-        });
+    <!-- Add more PO detail tables as needed -->
+  </main>
 
-        // Render Chart
-        const ctx = document.getElementById('costChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: groups,
-                datasets: [{
-                    label: 'Total Cost (INR)',
-                    data: groupCosts,
-                    backgroundColor: ['#4CAF50', '#FFC107', '#2196F3', '#FF5722', '#9C27B0']
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'top' }
-                },
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-    </script>
+  <script>
+    // Generate the Items Breakdown chart
+    const itemsData = {
+      labels: ['Tapioca Chips', 'Kerala Banana Chips', 'Achappam', 'Jaggery Banana Chips', 'Ripe Banana Chips', 'Tender Coconut Halwa'],
+      datasets: [{
+        label: 'Quantity',
+        data: [95, 95, 100, 95, 95, 120],
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#C9CBCF']
+      }]
+    };
+
+    const itemsChart = new Chart(document.getElementById('itemsChart'), {
+      type: 'pie',
+      data: itemsData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+
+    // Generate the Orders by Location chart
+    const locationData = {
+      labels: ['Bangalore', 'Jhajjar', 'Gurgaon', 'Hyderabad', 'Bhiwandi', 'Kolkata', 'Chennai', 'Pune'],
+      datasets: [{
+        label: 'Orders',
+        data: [4, 4, 2, 5, 1, 1, 1, 1],
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#C9CBCF', '#E84A5F', '#F1D302']
+      }]
+    };
+
+    const locationChart = new Chart(document.getElementById('locationChart'), {
+      type: 'pie',
+      data: locationData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  </script>
 </body>
 </html>
